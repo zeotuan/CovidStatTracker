@@ -1,18 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {fetchDailyData} from '../../Api';
 import {Line,Bar} from 'react-chartjs-2';
-import { StylesProvider } from '@material-ui/core';
 import styles from './Chart.module.css';
-const Chart = () => {
+const Chart = ({country,data}) => {
 
     const [dailyData, setDailyData] = useState([]);
     useEffect(() => {
         (async () => {
-            const data = await fetchDailyData();
+            const data = await fetchDailyData(country);
             setDailyData(data);
         })();
-    },[])
-    console.log(dailyData)
+    },[country])
     const LineChart = (
             dailyData?.length?
             <Line
@@ -37,10 +35,42 @@ const Chart = () => {
             : null
         )
 
-    
+        const barChart = (
+            country && data?
+            <Bar
+                data={{
+                    labels:["Infected","Recovered","Deaths"],
+                    datasets:[
+                        {
+                            data: [data?.confirmed.value, data?.recovered.value, data?.deaths.value],
+                            label: 'People',
+                            backgroundColor:[
+                                'rgba(0,0,255,0.5)',
+                                'rgba(0,255,0,0.5)',
+                                'rgba(255,0,0,0.5)',
+                            ]
+                        }
+                    ],
+                }}
+                
+                options={{
+                    legend:{
+                        display:false
+                    },
+                    title:{
+                        display:true,
+                        text:`Current State in ${country}`
+                    }
+                }}
+            
+            />
+            : null
+        )
+
+    console.log(data);
     return (
         <div className={styles.container}>
-            {LineChart}
+            {country && country!== 'global' ? barChart:LineChart}
         </div>
     )
 }
