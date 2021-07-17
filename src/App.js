@@ -9,20 +9,24 @@ function App() {
   const [country, setCountry] = useState();
 
   const handleCountryChange = async (countryName) => {
+    setData();
+    //await fetchCountry(countryName);
     setCountry(countryName);
   }
 
+  const fetchCountry = async () => {
+    const rawData = await fetchData(country);
+    setData(rawData);
+  }
+
   useEffect(()=> {
-    (async () => {
-      const rawData = await fetchData(country);
-      setData(rawData);
-    })();
+      fetchCountry(country)
   },[country])
   return (
     <div className={styles.container}>
       <img className={styles.image} src={undefined} alt={"Covid-19"}></img>
-      <Cards data={data}/>
       <CountryPicker handleCountryChange={handleCountryChange}/>
+      <Cards data={data}/>
       <Chart country={country} data={data} />
     </div>
   );

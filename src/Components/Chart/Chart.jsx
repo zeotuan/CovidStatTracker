@@ -5,12 +5,13 @@ import styles from './Chart.module.css';
 const Chart = ({country,data}) => {
 
     const [dailyData, setDailyData] = useState([]);
+
     useEffect(() => {
-        (async () => {
-            const data = await fetchDailyData(country);
+        (country === 'global' || country === undefined) && (async () => {
+            const data = await fetchDailyData();
             setDailyData(data);
         })();
-    },[country])
+    },[])
     const LineChart = (
             dailyData?.length?
             <Line
@@ -66,8 +67,6 @@ const Chart = ({country,data}) => {
             />
             : null
         )
-
-    console.log(data);
     return (
         <div className={styles.container}>
             {country && country!== 'global' ? barChart:LineChart}
